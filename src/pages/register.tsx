@@ -1,29 +1,17 @@
 import React from "react";
-import { useMutation } from "urql";
+import { Box, Button, Text, Heading } from "@chakra-ui/core";
 import { Formik, Form } from "formik";
 import { InputField } from "../components/InputField";
 import { Wrapper } from "../components/Wrapper";
-import { Box, Button, Text, Heading } from "@chakra-ui/core";
+import { useRegisterMutation } from "../generated/graphql";
+import { getErrors } from "../utils/getErrors";
 
 interface RegisterProps {}
 
 const initialValues = { username: "", password: "" };
-const mutation = `
-  mutation Register($username: String!, $password: String!) {
-    register(options: { username: $username, password: $password }) {
-      user {
-        username
-      }
-      errors {
-        errorMessage
-        field
-      }
-    }
-  }
-`;
 
 const Register: React.FC<RegisterProps> = ({}) => {
-  const [, register] = useMutation(mutation);
+  const [, register] = useRegisterMutation();
   return (
     <Wrapper>
       <Heading as="h4" size="md">
@@ -31,9 +19,15 @@ const Register: React.FC<RegisterProps> = ({}) => {
       </Heading>
       <Formik
         initialValues={initialValues}
-        onSubmit={(values) => register(values)}
+        onSubmit={async (values, { setErrors }) => {
+          const response = await register(values);
+          if (response.data?.register.errors) {
+            const errors = getErrors(response.data.register.errors);
+            setErrors(errors);
+          }
+        }}
       >
-        {({ values, handleChange, isSubmitting }) => (
+        {({ isSubmitting }) => (
           <Form>
             <Box mt={4}>
               <InputField
