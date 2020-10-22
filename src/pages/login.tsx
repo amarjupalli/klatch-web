@@ -5,12 +5,14 @@ import { InputField } from "../components/InputField";
 import { Wrapper } from "../components/Wrapper";
 import { useLoginMutation } from "../generated/graphql";
 import { getErrors } from "../utils/getErrors";
+import { useRouter } from "next/router";
 
 interface LoginProps {}
 
 const initialValues = { username: "", password: "" };
 
 const Login: React.FC<LoginProps> = ({}) => {
+  const router = useRouter();
   const [, login] = useLoginMutation();
   return (
     <Wrapper>
@@ -24,6 +26,8 @@ const Login: React.FC<LoginProps> = ({}) => {
           if (response.data?.login.errors) {
             const errors = getErrors(response.data.login.errors);
             setErrors(errors);
+          } else if (response.data?.login.user) {
+            return router.push("/");
           }
         }}
       >
