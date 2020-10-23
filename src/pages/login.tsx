@@ -3,26 +3,26 @@ import { Box, Button, Text, Heading } from "@chakra-ui/core";
 import { Formik, Form } from "formik";
 import { InputField } from "../components/InputField";
 import { Wrapper } from "../components/Wrapper";
-import { useRegisterMutation } from "../generated/graphql";
+import { useLoginMutation } from "../generated/graphql";
 import { getErrors } from "../utils/getErrors";
 
-interface RegisterProps {}
+interface LoginProps {}
 
 const initialValues = { username: "", password: "" };
 
-const Register: React.FC<RegisterProps> = ({}) => {
-  const [, register] = useRegisterMutation();
+const Login: React.FC<LoginProps> = ({}) => {
+  const [, login] = useLoginMutation();
   return (
     <Wrapper>
       <Heading as="h4" size="md">
-        User Registration
+        Log in
       </Heading>
       <Formik
         initialValues={initialValues}
         onSubmit={async (values, { setErrors }) => {
-          const response = await register(values);
-          if (response.data?.register.errors) {
-            const errors = getErrors(response.data.register.errors);
+          const response = await login({ options: values });
+          if (response.data?.login.errors) {
+            const errors = getErrors(response.data.login.errors);
             setErrors(errors);
           }
         }}
@@ -50,7 +50,7 @@ const Register: React.FC<RegisterProps> = ({}) => {
                 variantColor="orange"
                 isLoading={isSubmitting}
               >
-                <Text color="white">Register</Text>
+                <Text color="white">Log in</Text>
               </Button>
             </Box>
           </Form>
@@ -60,4 +60,4 @@ const Register: React.FC<RegisterProps> = ({}) => {
   );
 };
 
-export default Register;
+export default Login;

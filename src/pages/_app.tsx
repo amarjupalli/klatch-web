@@ -3,7 +3,12 @@ import { ThemeProvider, CSSReset, ColorModeProvider } from "@chakra-ui/core";
 import theme from "../theme";
 
 // FIXME: read the port of env after setting up docker
-const client = createClient({ url: "http://localhost:9000/graphql" });
+const client = createClient({
+  url: "http://localhost:9000/graphql",
+  fetchOptions: {
+    credentials: "include",
+  },
+});
 
 function MyApp({ Component, pageProps }) {
   return (
