@@ -1,6 +1,6 @@
-import { Text } from "@chakra-ui/core";
 import React from "react";
+import NavBar from "../components/NavBar";
 
-const Index = () => <Text>Hello world!</Text>;
+const Index = () => <NavBar />;
 
 export default Index;
