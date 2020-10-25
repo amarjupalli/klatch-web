@@ -11,7 +11,7 @@ import { createUrqlClient } from "../utils/createUrqlClient";
 
 interface RegisterProps {}
 
-const initialValues = { username: "", password: "" };
+const initialValues = { username: "", email: "", password: "" };
 
 const Register: React.FC<RegisterProps> = ({}) => {
   const router = useRouter();
@@ -24,7 +24,7 @@ const Register: React.FC<RegisterProps> = ({}) => {
       <Formik
         initialValues={initialValues}
         onSubmit={async (values, { setErrors }) => {
-          const response = await register(values);
+          const response = await register({ options: values });
           if (response.data?.register.errors) {
             const errors = getErrors(response.data.register.errors);
             return setErrors(errors);
@@ -41,6 +41,9 @@ const Register: React.FC<RegisterProps> = ({}) => {
                 name="username"
                 placeholder="username"
               />
+            </Box>
+            <Box mt={4}>
+              <InputField label="email" name="email" placeholder="email" />
             </Box>
             <Box mt={4}>
               <InputField
