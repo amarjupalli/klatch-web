@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
+import NextLink from "next/link";
 import { Form, Formik } from "formik";
 import { Wrapper } from "../../components/Wrapper";
-import { Text, Button } from "@chakra-ui/core";
+import { Text, Button, Flex, Link } from "@chakra-ui/core";
 import { InputField } from "../../components/InputField";
 import { useChangePasswordMutation } from "../../generated/graphql";
 import { getErrors } from "../../utils/getErrors";
@@ -39,9 +40,14 @@ export const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
               type="password"
             />
             {tokenErr && (
-              <Text mt={2} color="tomato">
-                {tokenErr}
-              </Text>
+              <Flex>
+                <Text mt={2} color="tomato">
+                  {tokenErr}
+                </Text>
+                <NextLink href="/forgot-password">
+                  <Link>Generate new token</Link>
+                </NextLink>
+              </Flex>
             )}
             <Button
               mt={4}
