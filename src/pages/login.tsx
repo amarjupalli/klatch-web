@@ -11,7 +11,7 @@ import { createUrqlClient } from "../utils/createUrqlClient";
 
 interface LoginProps {}
 
-const initialValues = { username: "", password: "" };
+const initialValues = { usernameOrEmail: "", password: "" };
 
 const Login: React.FC<LoginProps> = ({}) => {
   const router = useRouter();
@@ -24,7 +24,7 @@ const Login: React.FC<LoginProps> = ({}) => {
       <Formik
         initialValues={initialValues}
         onSubmit={async (values, { setErrors }) => {
-          const response = await login({ options: values });
+          const response = await login(values);
           if (response.data?.login.errors) {
             const errors = getErrors(response.data.login.errors);
             setErrors(errors);
@@ -37,9 +37,9 @@ const Login: React.FC<LoginProps> = ({}) => {
           <Form>
             <Box mt={4}>
               <InputField
-                label="username"
-                name="username"
-                placeholder="username"
+                label="username/email"
+                name="usernameOrEmail"
+                placeholder="username/email"
               />
             </Box>
             <Box mt={4}>
