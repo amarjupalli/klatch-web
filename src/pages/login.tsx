@@ -30,7 +30,9 @@ const Login: React.FC<LoginProps> = ({}) => {
             const errors = getErrors(response.data.login.errors);
             setErrors(errors);
           } else if (response.data?.login.user) {
-            return router.push("/");
+            return router.push(
+              typeof router.query.next === "string" ? router.query.next : "/"
+            );
           }
         }}
       >
