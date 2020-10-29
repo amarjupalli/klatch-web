@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { withUrqlClient } from "next-urql";
 import NextLink from "next/link";
-import { Post, usePostsQuery } from "../generated/graphql";
+import { usePostsQuery } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { Layout } from "../components/Layout";
 import {
@@ -47,7 +47,7 @@ const Index = () => {
       {data ? (
         <>
           <Stack spacing={8} mt={4}>
-            {data.posts.map(({ id, title, textSnippet }) => (
+            {data.posts.posts.map(({ id, title, textSnippet }) => (
               <Box
                 key={id}
                 p={5}
@@ -66,13 +66,16 @@ const Index = () => {
           </Stack>
           <Flex mt={2}>
             <Button
+              isDisabled={!data.posts.hasMore}
               isLoading={fetching}
               mt={2}
               variant="ghost"
               variantColor="orange"
               m="auto"
               onClick={() =>
-                onShowMoreClick(data.posts[data.posts.length - 1].createdAt)
+                onShowMoreClick(
+                  data.posts.posts[data.posts.posts.length - 1].createdAt
+                )
               }
             >
               Show more

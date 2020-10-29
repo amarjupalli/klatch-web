@@ -27,18 +27,30 @@ export const cursorPagination = (): Resolver => {
     }
 
     const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`;
-    const isInCache = cache.resolveFieldByKey(entityKey, fieldKey);
+    const isInCache = cache.resolve(
+      cache.resolveFieldByKey(entityKey, fieldKey) as string,
+      "posts"
+    );
     info.partial = !isInCache; // set partial flag when next pieces of date are not in cache
 
+    let hasMore = true;
     const results: string[] = [];
     fieldInfos.forEach((field) => {
-      const data = cache.resolveFieldByKey(
-        entityKey,
-        field.fieldKey
-      ) as string[];
+      const key = cache.resolveFieldByKey(entityKey, field.fieldKey) as string;
+      const data = cache.resolve(key, "posts") as string[];
+      const _hasMore = cache.resolve(key, "hasMore");
+      if (!_hasMore) {
+        hasMore = _hasMore as boolean;
+      }
       results.push(...data);
     });
-    return results;
+
+    return {
+      // urql can't figure this out so we need to manually specify the typename
+      __typename: "PaginatedPosts",
+      hasMore,
+      posts: results,
+    };
   };
 };
 
@@ -50,6 +62,9 @@ export const createUrqlClient = (ssrExchange: any) => ({
   exchanges: [
     dedupExchange,
     cacheExchange({
+      keys: {
+        PaginatedPosts: () => null,
+      },
       resolvers: {
         Query: {
           posts: cursorPagination(),
