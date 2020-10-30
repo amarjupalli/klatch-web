@@ -4,16 +4,8 @@ import NextLink from "next/link";
 import { usePostsQuery } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { Layout } from "../components/Layout";
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Icon,
-  Link,
-  Stack,
-  Text,
-} from "@chakra-ui/core";
+import { Button, Flex, Heading, Icon, Link, Stack } from "@chakra-ui/core";
+import PostItem from "../components/PostItem";
 
 interface VariablesTypes {
   limit: number;
@@ -47,22 +39,18 @@ const Index = () => {
       {data ? (
         <>
           <Stack spacing={8} mt={4}>
-            {data.posts.posts.map(({ id, title, textSnippet }) => (
-              <Box
-                key={id}
-                p={5}
-                borderWidth="1px"
-                borderColor="orange.200"
-                shadow="md"
-              >
-                <NextLink href={`/post/${id}`}>
-                  <Heading as={Link} fontSize="xl">
-                    {title}
-                  </Heading>
-                </NextLink>
-                <Text mt={4}>{`${textSnippet}...`}</Text>
-              </Box>
-            ))}
+            {data.posts.posts.map(
+              ({ id, title, textSnippet, creator, points }) => (
+                <PostItem
+                  key={id}
+                  id={id}
+                  title={title}
+                  textSnippet={textSnippet}
+                  creator={creator}
+                  points={points}
+                />
+              )
+            )}
           </Stack>
           <Flex mt={2}>
             <Button
