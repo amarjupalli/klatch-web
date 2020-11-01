@@ -27,7 +27,7 @@ const Index = () => {
   return (
     <Layout>
       <Flex>
-        <Heading fontSize="xl" color="red.600">
+        <Heading fontSize="xl" color="orange.600" p={1}>
           posts
         </Heading>
         <NextLink href="/create-post">
@@ -40,14 +40,18 @@ const Index = () => {
         <>
           <Stack spacing={8} mt={4}>
             {data.posts.posts.map(
-              ({ id, title, textSnippet, creator, points }) => (
+              (
+                { id, title, textSnippet, creator, points, voteStatus },
+                index
+              ) => (
                 <PostItem
-                  key={id}
+                  key={`${index}-${id}`}
                   id={id}
                   title={title}
                   textSnippet={textSnippet}
                   creator={creator}
                   points={points}
+                  voteStatus={voteStatus}
                 />
               )
             )}

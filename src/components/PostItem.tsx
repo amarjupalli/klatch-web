@@ -6,7 +6,7 @@ import Vote from "./Vote";
 
 type PostItemProps = Pick<
   PostProps,
-  "id" | "title" | "textSnippet" | "points"
+  "id" | "title" | "textSnippet" | "points" | "voteStatus"
 > & { creator: Pick<UserProps, "id" | "username"> };
 
 export const PostItem: React.FC<PostItemProps> = ({
@@ -15,6 +15,7 @@ export const PostItem: React.FC<PostItemProps> = ({
   textSnippet,
   creator,
   points,
+  voteStatus,
 }: PostItemProps): JSX.Element => {
   return (
     <Flex
@@ -26,9 +27,9 @@ export const PostItem: React.FC<PostItemProps> = ({
       borderColor="orange.200"
       shadow="md"
     >
-      <Vote id={id} points={points} />
+      <Vote id={id} points={points} voteStatus={voteStatus} />
       <Box>
-        <NextLink href={`/post/${id}`}>
+        <NextLink href="post/[id]" as={`/post/${id}`}>
           <Heading as={Link} fontSize="xl">
             {title}
           </Heading>
