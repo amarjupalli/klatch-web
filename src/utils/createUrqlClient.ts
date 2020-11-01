@@ -5,6 +5,7 @@ import {
   stringifyVariables,
 } from "urql";
 import { cacheExchange, Resolver } from "@urql/exchange-graphcache";
+import gql from "graphql-tag";
 import { betterUpdateQuery } from "./betterUpdateQuery";
 
 import {
@@ -13,7 +14,9 @@ import {
   MeDocument,
   RegisterMutation,
   LogoutMutation,
+  VotingMutationVariables,
 } from "../generated/graphql";
+import { isSSR } from "./isSSR";
 
 export const cursorPagination = (): Resolver => {
   return (_parent, fieldArgs, cache, info) => {
@@ -54,10 +57,11 @@ export const cursorPagination = (): Resolver => {
   };
 };
 
-export const createUrqlClient = (ssrExchange: any) => ({
+export const createUrqlClient = (ssrExchange: any, ctx: any) => ({
   url: "http://localhost:9000/graphql",
   fetchOptions: {
     credentials: "include" as const,
+    headers: isSSR() ? { cookie: ctx.req.headers.cookie } : undefined,
   },
   exchanges: [
     dedupExchange,
@@ -72,6 +76,29 @@ export const createUrqlClient = (ssrExchange: any) => ({
       },
       updates: {
         Mutation: {
+          voting: (_result, args, cache, _info) => {
+            const { postId, value } = args as VotingMutationVariables;
+            const fragment = gql`
+              fragment _ on Post {
+                id
+                points
+                voteStatus
+              }
+            `;
+            const data = cache.readFragment(fragment, { id: postId } as any);
+            if (data) {
+              if (data.voteStatus === args.value) {
+                return;
+              }
+              const newPoints =
+                (data.points as number) + (!data.voteStatus ? 1 : 2) * value;
+              cache.writeFragment(fragment, {
+                id: postId,
+                points: newPoints,
+                voteStatus: value,
+              } as any);
+            }
+          },
           createPost: (_result, _args, cache, _info) => {
             const allFields = cache.inspectFields("Query");
             const fieldInfos = allFields.filter(
