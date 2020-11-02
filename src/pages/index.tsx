@@ -39,22 +39,24 @@ const Index = () => {
       {data ? (
         <>
           <Stack spacing={8} mt={4}>
-            {data.posts.posts.map(
-              (
-                { id, title, textSnippet, creator, points, voteStatus },
-                index
-              ) => (
-                <PostItem
-                  key={`${index}-${id}`}
-                  id={id}
-                  title={title}
-                  textSnippet={textSnippet}
-                  creator={creator}
-                  points={points}
-                  voteStatus={voteStatus}
-                />
-              )
-            )}
+            {data.posts.posts
+              .filter((post) => post !== null) //deleting a post makes it null
+              .map(
+                (
+                  { id, title, textSnippet, creator, points, voteStatus },
+                  index
+                ) => (
+                  <PostItem
+                    key={`${index}-${id}`}
+                    id={id}
+                    title={title}
+                    textSnippet={textSnippet}
+                    creator={creator}
+                    points={points}
+                    voteStatus={voteStatus}
+                  />
+                )
+              )}
           </Stack>
           <Flex mt={2}>
             <Button

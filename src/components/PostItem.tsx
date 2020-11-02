@@ -1,7 +1,19 @@
 import React from "react";
 import NextLink from "next/link";
-import { Flex, Box, Heading, Link, Text } from "@chakra-ui/core";
-import { Post as PostProps, User as UserProps } from "../generated/graphql";
+import {
+  Flex,
+  Box,
+  Heading,
+  Link,
+  Text,
+  Icon,
+  IconButton,
+} from "@chakra-ui/core";
+import {
+  Post as PostProps,
+  useDeletePostMutation,
+  User as UserProps,
+} from "../generated/graphql";
 import Vote from "./Vote";
 
 type PostItemProps = Pick<
@@ -17,6 +29,7 @@ export const PostItem: React.FC<PostItemProps> = ({
   points,
   voteStatus,
 }: PostItemProps): JSX.Element => {
+  const [, deletePost] = useDeletePostMutation();
   return (
     <Flex
       key={id}
@@ -38,6 +51,13 @@ export const PostItem: React.FC<PostItemProps> = ({
           posted by {creator.username}
         </Text>
         <Text mt={4}>{`${textSnippet}...`}</Text>
+        <IconButton
+          aria-label="delete post"
+          icon="delete"
+          color="red.400"
+          variant="ghost"
+          onClick={() => deletePost({ id })}
+        />
       </Box>
     </Flex>
   );
