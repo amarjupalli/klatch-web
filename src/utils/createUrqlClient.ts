@@ -15,6 +15,7 @@ import {
   RegisterMutation,
   LogoutMutation,
   VotingMutationVariables,
+  DeletePostMutationVariables,
 } from "../generated/graphql";
 import { isSSR } from "./isSSR";
 
@@ -76,6 +77,12 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => ({
       },
       updates: {
         Mutation: {
+          deletePost: (_result, args, cache, _info) => {
+            cache.invalidate({
+              __typename: "Post",
+              id: (args as DeletePostMutationVariables).id,
+            });
+          },
           voting: (_result, args, cache, _info) => {
             const { postId, value } = args as VotingMutationVariables;
             const fragment = gql`
